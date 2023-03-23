@@ -1,0 +1,852 @@
+---
+title: "mappe_sok-1006_Mikroøkonomi"
+author:  "kandidatnummer. 27"
+format: pdf
+execute:
+  echo: false
+warning: false
+message: false
+usermessage: false
+toc: true
+toc-title: "Innholdsfortegnelse"
+---
+
+# Kapittel.1
+
+```{python}
+import json
+import pandas as pd
+import requests
+from pyjstat import pyjstat
+import matplotlib.pyplot as plt
+import sympy as sp
+import numpy as np
+import matplotlib.dates as mdates
+```
+
+```{python}
+
+postUrl = "https://data.ssb.no/api/v0/no/table/10638/"
+
+### Spørring 1
+
+apiQuery = {
+  "query": [
+    {
+      "code": "KonsumInnd",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "TOTK",
+          "UTLK",
+          "NOHT"
+        ]
+      }
+    },
+    {
+      "code": "Reiseliv",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "0",
+          "01",
+          "01.01",
+          "01.02",
+          "01.03",
+          "01.04",
+          "01.05",
+          "01.06",
+          "01.07",
+          "01.08",
+          "01.09",
+          "01.10",
+          "02"
+        ]
+      }
+    },
+    {
+      "code": "ContentsCode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "Priser"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+```
+
+```{python}
+# Funksjon for å konvertere uttrekket til 2 dataframes, tar 2 paramtre
+
+def apiToDataframe(postUrl, query):
+
+    # postUrl som spørringen skal postes mot
+    # Spørringen og endepunktet til API-et kan hentes fra Statistikkbanken.
+
+    res = requests.post(postUrl, json=query)
+    # legger resultat i ds. DS har i tillegg en del metadata
+    ds = pyjstat.Dataset.read(res.text)
+    # skriver resultatet til to dataframes
+    # først dataframe med tekst
+    df = ds.write('dataframe')
+    # deretter dataframe med koder
+    df_id = ds.write('dataframe', naming='id')
+    # returnerer også ds i tilfelle en trenger metadata
+    return df, df_id, ds
+
+df, df_id, ds = apiToDataframe(postUrl, apiQuery)
+```
+
+```{python}
+postUrl = "https://data.ssb.no/api/v0/no/table/09266/"
+
+apiQuery = {
+  "query": [
+    {
+      "code": "Region",
+      "selection": {
+        "filter": "agg_single:Fylker2020",
+        "values": [
+          "30",
+          "03",
+          "34",
+          "38",
+          "42",
+          "11",
+          "46",
+          "15",
+          "50",
+          "18",
+          "54",
+          "21"
+        ]
+      }
+    },
+    {
+      "code": "Reiseliv",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "SUMRL",
+          "HR",
+          "TR",
+          "KU"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+```
+
+```{python}
+def apiToDataframe(postUrl, query):
+
+    # postUrl som spørringen skal postes mot
+    # Spørringen og endepunktet til API-et kan hentes fra Statistikkbanken.
+
+    res2 = requests.post(postUrl, json=query)
+    # legger resultat i ds. DS har i tillegg en del metadata
+    ds2 = pyjstat.Dataset.read(res2.text)
+    # skriver resultatet til to dataframes
+    # først dataframe med tekst
+    df2 = ds2.write('dataframe')
+    # deretter dataframe med koder
+    df_id2 = ds2.write('dataframe', naming='id')
+    # returnerer også ds i tilfelle en trenger metadata
+    return df2, df_id2, ds2
+
+df2, df_id2, ds2 = apiToDataframe(postUrl, apiQuery)
+```
+
+```{python}
+postUrl = "https://data.ssb.no/api/v0/no/table/10638/"
+
+apiQuery = {
+  "query": [
+    {
+      "code": "KonsumInnd",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "UTLK",
+          "NOHT"
+        ]
+      }
+    },
+    {
+      "code": "Reiseliv",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "0"
+        ]
+      }
+    },
+    {
+      "code": "ContentsCode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "Priser"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+```
+
+```{python}
+def apiToDataframe(postUrl, query):
+
+    # postUrl som spørringen skal postes mot
+    # Spørringen og endepunktet til API-et kan hentes fra Statistikkbanken.
+
+    res3 = requests.post(postUrl, json=query)
+    # legger resultat i ds. DS har i tillegg en del metadata
+    ds3 = pyjstat.Dataset.read(res3.text)
+    # skriver resultatet til to dataframes
+    # først dataframe med tekst
+    df3 = ds3.write('dataframe')
+    # deretter dataframe med koder
+    df_id3 = ds3.write('dataframe', naming='id')
+    # returnerer også ds i tilfelle en trenger metadata
+    return df3, df_id3, ds3
+
+df3, df_id3, ds3 = apiToDataframe(postUrl, apiQuery)
+```
+
+```{python}
+postUrl = 'https://data.ssb.no/api/v0/no/table/08403/'
+
+apiQuery = {
+  "query": [
+    {
+      "code": "Region",
+      "selection": {
+        "filter": "agg_single:Fylker2020",
+        "values": [
+          "18",
+          "54"
+        ]
+      }
+    },
+    {
+      "code": "HotellFormal",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "03"
+        ]
+      }
+    },
+    {
+      "code": "ContentsCode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "Overnattinger"
+        ]
+      }
+    },
+    {
+      "code": "Tid",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "2007M01",
+          "2007M02",
+          "2007M03",
+          "2007M04",
+          "2007M05",
+          "2007M06",
+          "2007M07",
+          "2007M08",
+          "2007M09",
+          "2007M10",
+          "2007M11",
+          "2007M12",
+          "2008M01",
+          "2008M02",
+          "2008M03",
+          "2008M04",
+          "2008M05",
+          "2008M06",
+          "2008M07",
+          "2008M08",
+          "2008M09",
+          "2008M10",
+          "2008M11",
+          "2008M12",
+          "2009M01",
+          "2009M02",
+          "2009M03",
+          "2009M04",
+          "2009M05",
+          "2009M06",
+          "2009M07",
+          "2009M08",
+          "2009M09",
+          "2009M10",
+          "2009M11",
+          "2009M12",
+          "2010M01",
+          "2010M02",
+          "2010M03",
+          "2010M04",
+          "2010M05",
+          "2010M06",
+          "2010M07",
+          "2010M08",
+          "2010M09",
+          "2010M10",
+          "2010M11",
+          "2010M12",
+          "2011M01",
+          "2011M02",
+          "2011M03",
+          "2011M04",
+          "2011M05",
+          "2011M06",
+          "2011M07",
+          "2011M08",
+          "2011M09",
+          "2011M10",
+          "2011M11",
+          "2011M12",
+          "2012M01",
+          "2012M02",
+          "2012M03",
+          "2012M04",
+          "2012M05",
+          "2012M06",
+          "2012M07",
+          "2012M08",
+          "2012M09",
+          "2012M10",
+          "2012M11",
+          "2012M12",
+          "2013M01",
+          "2013M02",
+          "2013M03",
+          "2013M04",
+          "2013M05",
+          "2013M06",
+          "2013M07",
+          "2013M08",
+          "2013M09",
+          "2013M10",
+          "2013M11",
+          "2013M12",
+          "2014M01",
+          "2014M02",
+          "2014M03",
+          "2014M04",
+          "2014M05",
+          "2014M06",
+          "2014M07",
+          "2014M08",
+          "2014M09",
+          "2014M10",
+          "2014M11",
+          "2014M12",
+          "2015M01",
+          "2015M02",
+          "2015M03",
+          "2015M04",
+          "2015M05",
+          "2015M06",
+          "2015M07",
+          "2015M08",
+          "2015M09",
+          "2015M10",
+          "2015M11",
+          "2015M12",
+          "2016M01",
+          "2016M02",
+          "2016M03",
+          "2016M04",
+          "2016M05",
+          "2016M06",
+          "2016M07",
+          "2016M08",
+          "2016M09",
+          "2016M10",
+          "2016M11",
+          "2016M12",
+          "2017M01",
+          "2017M02",
+          "2017M03",
+          "2017M04",
+          "2017M05",
+          "2017M06",
+          "2017M07",
+          "2017M08",
+          "2017M09",
+          "2017M10",
+          "2017M11",
+          "2017M12",
+          "2018M01",
+          "2018M02",
+          "2018M03",
+          "2018M04",
+          "2018M05",
+          "2018M06",
+          "2018M07",
+          "2018M08",
+          "2018M09",
+          "2018M10",
+          "2018M11",
+          "2018M12",
+          "2019M01",
+          "2019M02",
+          "2019M03",
+          "2019M04",
+          "2019M05",
+          "2019M06",
+          "2019M07",
+          "2019M08",
+          "2019M09",
+          "2019M10",
+          "2019M11",
+          "2019M12",
+          "2020M01",
+          "2020M02",
+          "2020M03",
+          "2020M04",
+          "2020M05",
+          "2020M06",
+          "2020M07",
+          "2020M08",
+          "2020M09",
+          "2020M10",
+          "2020M11",
+          "2020M12",
+          "2021M01",
+          "2021M02",
+          "2021M03",
+          "2021M04",
+          "2021M05",
+          "2021M06",
+          "2021M07",
+          "2021M08",
+          "2021M09",
+          "2021M10",
+          "2021M11",
+          "2021M12",
+          "2022M01",
+          "2022M02",
+          "2022M03",
+          "2022M04",
+          "2022M05",
+          "2022M06",
+          "2022M07",
+          "2022M08",
+          "2022M09",
+          "2022M10",
+          "2022M11",
+          "2022M12",
+          "2023M01"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+```
+
+```{python}
+def apiToDataframe(postUrl, query):
+
+    # postUrl som spørringen skal postes mot
+    # Spørringen og endepunktet til API-et kan hentes fra Statistikkbanken.
+
+    res4 = requests.post(postUrl, json=query)
+    # legger resultat i ds. DS har i tillegg en del metadata
+    ds4 = pyjstat.Dataset.read(res4.text)
+    # skriver resultatet til to dataframes
+    # først dataframe med tekst
+    df4 = ds4.write('dataframe')
+    # deretter dataframe med koder
+    df_id4 = ds4.write('dataframe', naming='id')
+    # returnerer også ds i tilfelle en trenger metadata
+    return df4, df_id4, ds4
+
+df4, df_id4, ds4 = apiToDataframe(postUrl, apiQuery)
+```
+
+```{python}
+postUrl = 'https://data.ssb.no/api/v0/no/table/12897/'
+
+apiQuery = {
+  "query": [
+    {
+      "code": "Region",
+      "selection": {
+        "filter": "vs:Fylker2020",
+        "values": [
+          "18",
+          "54"
+        ]
+      }
+    },
+    {
+      "code": "ContentsCode",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "PrisRom"
+        ]
+      }
+    },
+    {
+      "code": "Tid",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "2020M01",
+          "2020M02",
+          "2020M03",
+          "2020M04",
+          "2020M05",
+          "2020M06",
+          "2020M07",
+          "2020M08",
+          "2020M09",
+          "2020M10",
+          "2020M11",
+          "2020M12",
+          "2021M01",
+          "2021M02",
+          "2021M03",
+          "2021M04",
+          "2021M05",
+          "2021M06",
+          "2021M07",
+          "2021M08",
+          "2021M09",
+          "2021M10",
+          "2021M11",
+          "2021M12",
+          "2022M01",
+          "2022M02",
+          "2022M03",
+          "2022M04",
+          "2022M05",
+          "2022M06",
+          "2022M07",
+          "2022M08",
+          "2022M09",
+          "2022M10",
+          "2022M11",
+          "2022M12"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
+```
+
+```{python}
+def apiToDataframe(postUrl, query):
+
+    # postUrl som spørringen skal postes mot
+    # Spørringen og endepunktet til API-et kan hentes fra Statistikkbanken.
+
+    res5 = requests.post(postUrl, json=query)
+    # legger resultat i ds. DS har i tillegg en del metadata
+    ds5 = pyjstat.Dataset.read(res5.text)
+    # skriver resultatet til to dataframes
+    # først dataframe med tekst
+    df5 = ds5.write('dataframe')
+    # deretter dataframe med koder
+    df_id5 = ds5.write('dataframe', naming='id')
+    # returnerer også ds i tilfelle en trenger metadata
+    return df5, df_id5, ds5
+
+df5, df_id5, ds5 = apiToDataframe(postUrl, apiQuery)
+```
+
+### Analysegrunnlag
+
+Turistskatt er et aktuelt tema, og regjeringen (2023) vurderer å tillate kommuner å innføre en slik skatt, kalt "besøksbidrag". Målet er å skape en bærekraftig, helårlig og lønnsom næring. En reiselivshandlingsplan lanseres snart, Denne analysen undersøker samfunnsøkonomiske effekter av en slik skatt. For at turistskatten skal være effektiv, må den planlegges nøye, inkludert valg av skatteform og forvaltning av inntektene. Feilslåtte tiltak kan skade turistnæringen og redusere den samlede velferden.
+
+Turisme er en viktig næring i Norge, og spesielt i Nord-Norge, den spektakulære naturen og den arktiske kulturen tiltrekker seg turister fra hele verden. En turistskatt er en avgift som turister må betale for å overnatte på hoteller eller andre overnattingssteder, og det har blitt diskutert om en slik skatt vil ha en positiv eller negativ effekt på turistmarkedet i Norge og Nord-Norge spesielt.
+
+I denne analysen vil vi undersøke hvordan en turistskatt vil påvirke turistnæringen i Norge og Nord-Norge. Vi vil se på hvordan denne avgiften kan påvirke turistenes konsum, og hva slags effekt dette vil ha på arbeidsmarkedet i turistnæringen.
+
+Gjennom denne analysen skal det belyses noen av de viktigste faktorene som påvirker turistmarkedet i Norge og Nord-Norge, og gi et innblikk i hvordan en turistskatt kan påvirke denne næringen i fremtiden.
+
+Utredningen er organisert slik:
+Kapittel 2 fokuserer på turistnæringen i Norge, og analyserer overnattingstall, kosum å deres utvikling over tid. Kapittelet gir også et overblikk over reiseliv, konsumet og verdiskapingen.
+Kapittel 3 undersøker samfunnsøkonomiske virkninger av turistskatten, inkludert effekt- og fordelingsvirkningene. Kapittel 4 oppsummerer funnene og gir anbefalinger.
+
+### Erfaringer med turistskatt
+
+Turistskatter har blitt stadig mer utbredt i Europa, men det finnes fortsatt få studier som undersøker de samfunnsøkonomiske effektene av slike tiltak.
+
+Balearicøyene innførte en turistskatt på overnattinger i 2002. Dette øygruppen består av Mallorca, Menorca, Ibiza og Formentera. På begynnelsen av 2000-tallet mottok øygruppen omtrent 8 millioner turister årlig, mens den hadde en fast befolkning på rundt 800 000 innbyggere. Mallorca, som er den mest populære turistdestinasjonen i øygruppen, opplevde betydelig press på infrastrukturen og naturressursene som følge av turismen. Turistskatten ble innført for å finansiere forbedringer i infrastrukturen, vedlikehold av nasjonalparker, økoturisme-prosjekter og gjenoppbygging av jordbruket. Ett år senere kom et annet parti til makten og fjernet deretter skatten. I løpet av dette året registrerte man en økning på 5 prosent i antall britiske turister, noe som tilsvarer 4 millioner besøkende. (Templeton, 2003) Det er imidlertid utfordrende å konkludere om denne veksten ville vært enda høyere dersom skatten ikke hadde vært innført. I slike tilfeller kan det være interessant å undersøke etterspørselselastisiteten for å vurdere hvordan turister fra ulike økonomiske klasser responderer på prisendringer. Dette kan gi innsikt i hvordan turistskatter påvirker turiststrømmen og hvilke implikasjoner dette har for de samfunnsøkonomiske effektene av slike tiltak.
+
+# kapittel. 2
+
+### Økt konsum
+
+```{python}
+
+df_grouped = df.groupby(['konsumentgruppe', 'år'])['value'].sum().reset_index()
+
+fig, ax = plt.subplots(figsize=(10, 6))
+for label, group in df_grouped.groupby('konsumentgruppe'):
+    ax.bar(group['år'], group['value'])
+
+ax.set_title('Konsumentutgifter til reiseliv i Norge')
+ax.set_xlabel('År')
+ax.set_ylabel('Verdi')
+ax.legend(['Totalt', 'Utenlandske', 'Norske'])
+
+plt.show()
+```
+
+I løpet av de siste årene har det vært en økning i konsumentutgiftene innen reiselivsindustrien i Norge. Denne trenden kan tyde på at norske borgere viser økende interesse for å utforske sitt eget land og benytte seg av turisttilbud og opplevelser innenlands. En rekke faktorer kan bidra til denne utviklingen, inkludert økt fokus på bærekraftig turisme, ønske om kortere reisetider og oppdagelse av lokale skjulte perler.
+
+Samtidig viser data fra Statistisk sentralbyrå (SSB) at antallet utenlandske turister som besøker Norge også har vært økende. Dette kan være et resultat av flere faktorer, som økt internasjonal oppmerksomhet rundt Norges naturskjønnhet, kultur og historie, samt effektive markedsføringskampanjer rettet mot utenlandske besøkende. Utenlandske turister bidrar til økningen i konsumet innen norsk turistnæring, og dette gir positive ringvirkninger for lokale bedrifter og økonomien som helhet.
+
+Figuren illustrerer den betydelige veksten i konsumet innen norsk turistnæring. Dette tyder på at både innenlandske og utenlandske turister bidrar til denne veksten.
+
+```{python}
+plot_df = df3.groupby(['konsumentgruppe', 'år'])['value'].sum().reset_index()
+fig, axs = plt.subplots(1, 2, figsize=(10, 6))
+
+plot_df_utland = plot_df.iloc[0:14]
+plot_df_norge = plot_df.iloc[15:29]
+
+axs[0].bar(plot_df_utland['år'], plot_df_utland['value'])
+axs[1].bar(plot_df_norge['år'], plot_df_norge['value'])
+axs[0].set_title('Turistkonsum i Norge av utenlandske turister')
+axs[1].set_title('Turistkonsum i Norge av norske turister')
+axs[0].set_xlabel('År')
+axs[1].set_xlabel('År')
+axs[0].set_ylabel('Verdi')
+
+for ax in axs:
+    ax.tick_params(axis='x', labelrotation=45)
+    
+plt.show()
+```
+ Vi ser tydelig at Norke husholdninger kosumerer mere enn Utenlandske turister. Dette kan tyde på at Norske turister er mer villige til å bruke penger på feiriering i Norge. Det som er interessant for denne analysen er hvor mye mer de bruker for hvert år som går. 
+### Turistskatt
+
+Turistskatt er en skatt som kan innføres på overnattinger og har flere formål. Én av hovedhensiktene er å skaffe inntekter som kan brukes til å finansiere offentlige tjenester og tiltak som turister drar nytte av. Dette kan omfatte vedlikehold av offentlige bygninger og fasiliteter, turistinformasjon, kulturarrangementer og infrastruktur.
+
+En annen grunn til å innføre turistskatt er å redusere miljøbelastningen som turismen kan medføre. Ved å øke kostnadene for overnattinger, kan turistskatt motivere turister til å velge mer bærekraftige transportmidler og overnattingssteder og oppmuntre til en mer ansvarlig holdning til miljøet.
+
+Markedet for overnattinger uten en skatt fungerer på samme måte som ethvert annet marked. Turister som søker overnatting, velger mellom et bredt utvalg av overnattingssteder som hoteller, moteller, bed and breakfasts, leiligheter og private utleieenheter. Disse overnattingsstedene konkurrerer om turistenes gunst ved å tilby ulike priser, fasiliteter og beliggenhet.
+
+Innføringen av en turistskatt på overnattinger kan ha flere potensielle konsekvenser for markedet for overnattinger og turisme generelt. En økning i prisen på overnattinger som følge av skatten kan føre til at noen turister velger billigere alternativer eller reiser til andre destinasjoner, og redusere etterspørselen etter overnattinger. Dette kan igjen føre til et overskudd av overnattingskapasitet og redusert lønnsomhet for overnattingssteder.
+
+Samtidig kan turistskatten gi lokale myndigheter mulighet til å øke sine inntekter, som kan brukes til å finansiere tiltak som gagner både turister og lokalbefolkningen. Dette kan inkludere investeringer i turistattraksjoner, oppgradering av infrastruktur og bedre ivaretakelse av miljøet. På lengre sikt kan turistskatten også bidra til å redusere miljøbelastningen ved turismen og skape et mer bærekraftig og ansvarlig forhold mellom turister og lokalbefolkningen.
+
+Det er imidlertid viktig å være oppmerksom på potensielle negative konsekvenser av turistskatten. Økningen i prisen på overnattinger kan føre til at noen turister velger å reise til andre destinasjoner eller velger billigere overnattingssteder, og dermed redusere etterspørselen etter overnattinger. Dette kan igjen føre til et overskudd av overnattingskapasitet og redusert lønnsomhet for overnattingssteder, spesielt hvis turistskatten er høy.
+
+På lengre sikt kan imidlertid turistskatten bidra til å redusere de negative konsekvensene av overturisme, som støy, natur forurensning og annen ulempe som turismen kan medføre. Turistskatten kan også føre til en mer balansert og rettferdig fordeling av fordelene og ulempene ved turisme, og bidra til å begrense de negative konsekvensene av overturisme.
+
+Effektivitetseffekten kan ses i form av en mer effektiv utnyttelse av overnattingskapasiteten på destinasjonen. Med en ekstra avgift på overnattinger vil prisen for turistene øke, noe som kan føre til at etterspørselen etter overnattinger synker. Dette kan igjen føre til en reduksjon i antall ledige rom og en mer effektiv utnyttelse av overnattingskapasiteten. Skatteinntektene fra turistskatten kan brukes til å finansiere tiltak som gagner både turister og lokalbefolkningen, som for eksempel vedlikehold av offentlige bygninger og fasiliteter, turistinformasjon og kulturarrangementer. Dette kan bidra til å øke effektiviteten i turistindustrien.
+
+Fordelingseffekten kan ses i form av en mer rettferdig fordeling av kostnadene og fordelene ved turisme. Turister som tidligere ikke bidro med skatteinntekter vil nå belastes med en ekstra avgift, noe som kan føre til at de som reiser oftere eller velger mer luksuriøse overnattingssteder, bidrar mer til samfunnet. Dette kan bidra til en mer rettferdig fordeling av kostnadene ved turisme. Samtidig kan skatteinntektene brukes til å finansiere tiltak som gagner både turister og lokalbefolkningen, som for eksempel investeringer i turistattraksjoner, oppgradering av infrastruktur og bedre ivaretakelse av miljøet. Dette kan bidra til en mer balansert fordeling av fordelene ved turisme og redusere ulempene ved overturisme.
+
+En turistskatt kan ha betydelige effekter på etterspørselen etter overnattinger, og dette avhenger av flere faktorer. For det første vil populariteten til destinasjonen spille en rolle i hvor mye en skatt kan påvirke etterspørselen etter overnattinger. Populære destinasjoner kan tåle høyere skatter, mens mindre populære destinasjoner kan være mer sårbare for økningen i pris. Videre vil størrelsen på skatten og hvordan skatteinntektene brukes også påvirke effektene. Hvis skatten er høy og brukes til tiltak som ikke gagner turister, kan det føre til en betydelig reduksjon i etterspørselen etter overnattinger, spesielt blant prisfølsomme turister. Men en moderat skatt som brukes til tiltak som gagner både turister og lokalbefolkningen, kan ha mindre negative effekter på etterspørselen etter overnattinger.
+
+Det er også viktig å vurdere hvordan skatteinntektene brukes. Hvis skatteinntektene brukes til tiltak som forbedrer turistopplevelsen og ivaretar miljøet, kan det bidra til å øke destinasjonens attraktivitet og dermed motvirke de negative effektene av en turistskatt. På samme måte kan skatteinntektene også brukes til å redusere andre skatter eller finansiere andre offentlige tjenester, som kan ha positive effekter på både turister og lokalbefolkningen.
+
+En annen faktor som kan påvirke effekten av en turistskatt, er hvordan den blir innført og kommunisert til turistene. Hvis turistene ikke er klar over skatten eller ikke forstår formålet med den, kan det føre til misnøye og negative reaksjoner. Derfor er det viktig å ha en tydelig og kommunisert plan for innføringen av en turistskatt, og å sørge for at turistene er godt informert om hva skatten vil bli brukt til.
+
+Til syvende og sist vil effektene av en turistskatt på overnattinger avhenge av en rekke faktorer, inkludert størrelsen på skatten, hvordan skatteinntektene brukes, populariteten til destinasjonen, og hvordan skatten blir innført og kommunisert til turistene. En velutformet og effektivt kommunisert turistskatt kan bidra til å øke effektiviteten og bærekraftigheten i turistindustrien, samtidig som den bidrar til en mer rettferdig fordeling av kostnadene og fordelene ved turisme.
+
+### Hotellpriser
+
+```{python}
+
+data = df5[['region', 'måned', 'value']]
+
+# Konverter kolonnen 'måned' til en periodeobjekt med månedlig frekvens
+data['måned'] = pd.to_datetime(data['måned'], format='%YM%m').dt.to_period('M')
+
+# Filtrer dataene mellom 2020 og 2023
+filtered = data[(data['måned'].dt.year >= 2020) & (data['måned'].dt.year <= 2023)]
+
+gruppert = filtered.groupby(['region', 'måned']).mean().reset_index()
+
+pivot = gruppert.pivot(index='måned', columns='region', values='value')
+
+# Bruk ax-objektet for å kontrollere søylediagrammet
+ax = pivot.plot(kind='bar', figsize=(12, 6))
+
+plt.xlabel("måned for måned 2020-2023")
+plt.ylabel("Gjennomsnittspris")
+plt.title("Gjennomsnittspris etter region og måned")
+
+# Liste med månedsforkortelser
+month_labels_full = ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des', 'Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des','Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des']
+
+# Finner det faktiske antallet måneder i dataene og tilpasser month_labels
+num_months = len(pivot.index)
+month_labels = month_labels_full[:num_months]
+
+# Endre etiketter for å vise månedsforkortelser på x-aksen
+ax.set_xticks(range(num_months))
+ax.set_xticklabels(month_labels)
+
+plt.show()
+
+```
+
+Ved å undersøke hotellprisene i Nord-Norge, observerer vi at de generelt er stabile, men med svingninger mellom høy- og lavsesong for turisme. Dette er et vanlig fenomen i reiselivsbransjen, der prisene justeres for å reflektere endringer i etterspørselen gjennom året.
+
+I høysesongen, som ofte sammenfaller med sommermånedene og tidspunkter hvor naturskjønne attraksjoner som midnattssolen og nordlyset er mest synlige, er etterspørselen etter overnatting og turisttjenester høyere.
+
+Disse prisvariasjonene mellom høy- og lavsesong er et resultat av hotellenes forsøk på å tilpasse seg markedets dynamikk og tilby konkurransedyktige priser. Dette hjelper dem med å balansere tilbud og etterspørsel og sikre en stabil inntekt gjennom året.
+
+```{python}
+data = df4[['region', 'måned', 'value']]
+data['måned'] = pd.to_datetime(data['måned'], format='%YM%m')
+filtered = data[(data['måned'].dt.year >= 2020) & (data['måned'].dt.year <= 2023)]
+
+pivot = filtered.pivot(index='måned', columns='region', values='value')
+ax = pivot.plot(kind='line', figsize=(12, 6))
+ax.set_xlabel("år")
+ax.set_ylabel("Antall overnattinger")
+plt.show()
+```
+
+Når vi analyserer overnattinger de siste to årene, kan vi observere at dette mønsteret også gjenspeiles i antall bookinger. I høysesongen, når etterspørselen etter overnatting og turisttjenester er høyere, ser vi en økning i antall overnattinger. Dette står i kontrast til lavsesongen, der antallet overnattinger generelt er lavere på grunn av redusert turistaktivitet. Dette bekrefter ytterligere at hotellprisene i Nord-Norge er påvirket av svingningene mellom høy- og lavsesong for turisme.
+
+# Kapittel.3
+
+### Generisk markedskryss
+
+```{python}
+def demand(p):
+    return (500-p)/3.2
+def supply(p, t):
+    return ((100+p)/4.3) + t
+
+p,t = sp.symbols('p t', real=True, positive=True)
+equ = sp.Eq(demand(p), supply(p,t))
+
+x_eq=sp.solve(equ, p)
+p_eq=demand(x_eq[0])
+
+p,t = sp.symbols('p t', real=True, positive=True)
+equ = sp.Eq(demand(p), supply(p,t))
+producer=sp.integrate(p_eq-supply(p, t),(p,0,x_eq))
+consumer=sp.integrate(demand(p)-p_eq,(p,0,x_eq))
+welfare=(sp.integrate(demand(p)-supply(p, t),(p,0,x_eq)))
+avprov = sp.integrate(t, (p, 0, x_eq))
+
+x_num=np.linspace(0.1,500,100)
+equ_t0 = sp.Eq(demand(p),supply(p, 0))
+
+x_eq_t0 = sp.solve(equ_t0,p)
+x_eq_t0 = float(x_eq_t0[0])
+p_eq_t0=demand(x_eq_t0)
+
+x_num=np.linspace(0.1,500,100)
+
+equ_t4 = sp.Eq(demand(p),supply(p, 4))
+
+x_eq_t4 = sp.solve(equ_t4,p)
+x_eq_t4 = float(x_eq_t4[0])
+
+p_eq_t4=demand(x_eq_t4)
+
+def create_ax2():
+                fig, ax = plt.subplots()
+                ax.set_ylabel('Pris', loc='top')
+                ax.set_xlabel('Mengde', loc='right')
+                ax.set(xlim=(150,250))
+                ax.set(ylim=(60,110))
+                ax.spines['top'].set_color('none')
+                ax.spines['right'].set_color('none')
+                
+                return fig, ax
+
+fig, ax = create_ax2()
+
+ax.plot(x_num, demand(x_num), label='Etterspørsel')
+ax.plot(x_num, supply(x_num, 0), label='Tilbud u/avgift')
+ax.plot(x_num, supply(x_num, 4), label='Tilbud m/avgift')
+
+ax.set_title('Generisk eksempel på turistskatt')
+
+q2 = np.linspace(0,x_eq_t4,100)
+q3 = np.linspace(x_eq_t0,x_eq_t4,100)
+
+#vlines
+ax.vlines(x_eq_t4, 0, demand(x_eq_t4), color = 'black',linestyle = 'dashed', alpha=0.3)
+ax.vlines(x_eq_t0, 0, demand(x_eq_t0), color = 'black',linestyle = 'dashed', alpha=0.3)
+
+#fill between
+ax.fill_between(q2,p_eq_t4,demand(q2), color = 'green',alpha = 0.3,label='Konsumentoverskudd')
+ax.fill_between(q2,supply(q2, 0),p_eq_t4-4, color = 'red',alpha = 0.3,label='Produsentoverskudd')
+ax.fill_between(q2,p_eq_t4,p_eq_t4-4, color = 'yellow', alpha = 0.3,label='Skatteproveny')
+ax.fill_between(q3,supply(q3, 0),demand(q3), color = 'blue',alpha = 0.3,label='Dødvektstap')
+ax.set_xticks([])
+ax.set_yticks([])
+ax.legend()
+
+plt.show()
+```
+
+**Tilbuds- og etterspørselsfunksjonene** er grunnleggende konsepter innen økonomisk teori. Etterspørselsfunksjonen beskriver sammenhengen mellom prisen på et gode og mengden av dette godet som etterspørres i markedet. Denne funksjonen har en negativt skrånende form, noe som innebærer at etterspørselen avtar når prisen øker. Årsaken til dette er at konsumentenes betalingsvilje er avtakende; når prisen på et gode er høy, er det færre konsumenter som er villige og i stand til å kjøpe godet, og dermed reduseres den omsatte mengden i markedet. Når prisen på godet synker, øker etterspørselen, ettersom flere konsumenter nå har råd til å kjøpe det. Det antas også at konsumenter som allerede har kjøpt godet, vil være interessert i å kjøpe mer dersom prisen faller ytterligere.
+
+**Tilbudsfunksjonen,** på den annen side, beskriver forholdet mellom prisen på et gode og mengden av dette godet som produseres og tilbys i markedet. Denne funksjonen har en positivt skrånende form, noe som innebærer at tilbudet øker når prisen øker. Dette fenomenet kan forklares med at produsentene er mer villige til å produsere større mengder av godet når prisen stiger, ettersom dette vil generere høyere inntekter og potensielt større profitt.
+
+Den generiske figuren illustrerer sammenhengen mellom tilbuds- og etterspørselsfunksjonene, der likevektspunktet representerer situasjonen der mengden av varer eller tjenester som etterspørres er lik mengden som tilbys i markedet. I dette punktet dekkes produsentenes produksjonskostnader, og konsumentene betaler en pris som reflekterer deres oppfatning av godets verdi.
+
+**Konsumentoverskuddet** er forskjellen mellom den totale betalingsviljen til konsumentene og den faktiske prisen de betaler for et gode. Det er det ekstra beløpet konsumentene får i form av nytte, utover hva de faktisk betaler for godet. Konsumentoverskuddet kan visualiseres som området mellom etterspørselskurven og den faktiske prisen som viser mengde og pris i figuren.
+
+**Produsentoverskuddet** er forskjellen mellom den faktiske prisen produsentene mottar for et gode og den laveste prisen de ville vært villige til å akseptere for å produsere det. Det er det ekstra beløpet produsentene får i form av inntekt, utover deres produksjonskostnader. Produsentoverskuddet kan visualiseres som området mellom tilbudskurven og den faktiske prisen i figuren som viser mengde og pris.
+
+**Samfunnsøkonomisk overskudd**, som er summen av konsument- og produsentoverskuddet, det er mål på den samlede velferdsgevinsten for både konsumenter og produsenter i et marked. Når markedet er i likevekt, og det ikke foreligger noen markedssvikt, vil det samfunnsøkonomiske overskuddet være maksimert, noe som indikerer en effektiv allokering av ressurser og en optimal velferd for samfunnet.
+
+En optimal løsning vil være der inntektene fra skatteproveny er lik de marginale samfunnskostnadene som følger av turisme. hvis inntektene fra skatten er lik kostnadene turisme påfører lokal miljøet.
+
+Dette vil være optimalt ettersom det minimerer effektene på aktørene i markedet. Følgelig er det ønskelig at størrelsen på **provenyet** tilsvarer de samfunnsøkonomiske kostnadene. Imidlertid er det ingen garantier for at skatten vil ha en slik optimal virkning. En optimal skatt bør ha minimal forvridning av markedets aktører og deres beslutninger, samtidig som den genererer inntekter som tilsvarer de samfunnsøkonomiske kostnadene forbundet med det aktuelle godet eller tjenesten. Skatter og avgifter kan imidlertid ha utilsiktede konsekvenser, som for eksempel endringer i atferd og produksjonsbeslutninger, noe som kan føre til ineffektiv ressursallokering.
+
+Effektivitetstap oppstår når ressursene i et marked ikke allokeres på en optimal måte. Dette fenomenet kalles **dødvektstap** og skyldes at reduksjonen i nytteverdi for én gruppe aktører ikke kompenseres av en tilsvarende økning i nytteverdi for en annen gruppe. Dødvektstapet illustrerer ineffektiviteten som følger av suboptimal ressursallokering.
+
+# Kapittel.4
+
+### Oppsummering og anbefaling
+
+Forvaltning av skatteinntekter Selv om konsumenter og produsenter kan oppleve redusert overskudd som følge av skatter, betyr det ikke nødvendigvis at den samfunnsmessige velferden blir redusert. Skatteinntektene kan benyttes i alternative prosjekter som genererer positiv nytte. Når det gjelder forvaltning av turistskatten, NHO hevder at det er avgjørende at inntektene ikke ender opp i Finansdepartementets kasse eller brukes til å erstatte midler som kommunene allerede benytter til tilrettelegging og vedlikehold (NHO Reiseliv, n.d.).
+
+Turistskatten kan også påvirke aktørene i markedet på en ujevn måte. Bransjen domineres allerede av store hotellkjeder. En turistskatt på overnattinger, som allerede er kostbare, kan være spesielt skadelig for små og mellomstore bedrifter med lavere markedsandeler og inntjening. Dette kan føre til en enda mer skjev fordeling av markedsandeler i bransjen.
+
+
+### kilder
+
+Derek j. Clark., Moilanen, Mikko., Østbye, Stein (2020). Tourism in the Arctic I The economy of the North. ECONOR (SSB). <https://www.ssb.no/en/natur-og-miljo/artikler-og-publikasjoner/_attachment/454081?_ts=17bc94cfc98>
+
+Euronews. (2023, January 9). Tourist taxes: All of the countries you will have to pay to enter in 2022. [**https://www.euronews.com/travel/2023/01/09/tourist-taxes-all-of-the-countries-you-will-have-to-pay-to-enter-in-2022**](https://www.euronews.com/travel/2023/01/09/tourist-taxes-all-of-the-countries-you-will-have-to-pay-to-enter-in-2022)
+
+NHO Reiseliv. (n.d.). Tall og fakta om norsk reiseliv. [**https://www.nhoreiseliv.no/tall-og-fakta/tall-og-fakta-om-norsk-reiseliv/#sysselsetting**](https://www.nhoreiseliv.no/tall-og-fakta/tall-og-fakta-om-norsk-reiseliv/#sysselsetting)
+
+NHO Reiseliv. (n.d.). Skattelegging av privat konsum. [**https://www.nhoreiseliv.no/vi-mener/skattelegging-privat-konsum/**](https://www.nhoreiseliv.no/vi-mener/skattelegging-privat-konsum/)
+
+Templeton, T. (2003, June 8). A kick in the Balearics for eco-tax. The Guardian. [**https://www.theguardian.com/travel/2003/jun/08/travelnews.observerescapesection**](https://www.theguardian.com/travel/2003/jun/08/travelnews.observerescapesection)
